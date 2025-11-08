@@ -10,7 +10,10 @@
         }
     ],
     "minimum-stability": "dev",
-    "require": {},
+    "require": {
+        "istvanmolitor/user": "*@dev",
+        "istvanmolitor/currency": "*@dev"
+    },
     "autoload": {
         "psr-4": {
             "Molitor\\Purchase\\": "src/"
