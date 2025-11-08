@@ -1,0 +1,26 @@
+{
+    "name": "istvanmolitor/purchase",
+    "description": "Purchase",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Molitor István",
+            "email": "istvanmolitor@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Molitor\\Purchase\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Molitor\\Purchase\\Providers\\PurchaseServiceProvider"
+            ]
+        }
+    }
+}
