@@ -21,6 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Builder;
+use Molitor\Currency\Filament\Components\EnabledCurrencySelect;
 use Molitor\Currency\Repositories\CurrencyRepositoryInterface;
 use Molitor\Customer\Repositories\CustomerRepositoryInterface;
 use Molitor\Purchase\Filament\Resources\PurchaseResource\Pages;
@@ -112,12 +113,7 @@ class PurchaseResource extends Resource
                     ->columnSpan(1),
             ]),
             Grid::make(3)->schema([
-                Select::make('currency_id')
-                    ->label(__('purchase::common.currency'))
-                    ->options(Currency::query()->pluck('code', 'id'))
-                    ->default($currencyRepository->getDefaultId())
-                    ->required()
-                    ->reactive(),
+                EnabledCurrencySelect::make('currency_id')->required(),
                 TextInput::make('total_price')
                     ->label(__('purchase::common.total_price'))
                     ->numeric()

@@ -26,6 +26,7 @@ class ViewPurchase extends ViewRecord
                 ->visible(fn () => !$this->record->delivery_date)
                 ->requiresConfirmation()
                 ->action(function () {
+                    /** @var PurchaseService $purchaseService */
                     $purchaseService = app(PurchaseService::class);
                     $purchaseService->closePurchase($this->record, now());
 

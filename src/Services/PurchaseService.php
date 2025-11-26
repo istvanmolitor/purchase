@@ -5,13 +5,14 @@ namespace Molitor\Purchase\Services;
 use Carbon\Carbon;
 use Molitor\Purchase\Models\Purchase;
 use Molitor\Stock\Models\StockMovement;
+use Molitor\Stock\Enums\StockMovementType;
 
 class PurchaseService
 {
     public function closePurchase(Purchase $purchase, Carbon $deliveryDate): Purchase
     {
         $stockMovement = StockMovement::create([
-            'type' => 'in',
+            'type' => StockMovementType::In,
             'warehouse_id' => $purchase->warehouse_id,
             'description' => 'Purchase #' . $purchase->id,
         ]);
