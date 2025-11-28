@@ -49,4 +49,12 @@ return [
     'purchase_closed_successfully' => 'Beszerzés sikeresen lezárva',
     'user' => 'Felhasználó',
     'status_history' => 'Státusz előzmények',
+    'view_purchase' => 'Beszerzés megtekintése',
+    'view' => 'Megtekintés',
+    'basic_info' => 'Alapadatok',
+    'dates' => 'Dátumok',
+    'financial' => 'Pénzügyi adatok',
+    'timestamps' => 'Időbélyegek',
+    'updated_at' => 'Frissítve',
+    'no_comment' => 'Nincs megjegyzés',
 ];
