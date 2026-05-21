@@ -211,12 +211,15 @@ class PurchaseApiController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name', 'state', 'description']),
             'products' => Product::query()
+                ->with('mainImage:id,product_id,image_url')
                 ->orderBy('sku')
                 ->get(['id', 'sku'])
                 ->map(function (Product $product): array {
                     return [
                         'id' => $product->id,
-                        'name' => $product->sku,
+                        'sku' => $product->sku,
+                        'name' => $product->name ?: $product->sku,
+                        'image_url' => $product->mainImage?->image_url,
                     ];
                 })
                 ->values(),
