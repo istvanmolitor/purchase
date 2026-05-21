@@ -2,6 +2,7 @@
 
 namespace Molitor\Purchase\Providers;
 
+use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
 use Molitor\Purchase\Repositories\PurchaseRepositoryInterface;
 use Molitor\Purchase\Repositories\PurchaseRepository;
@@ -17,6 +18,9 @@ class PurchaseServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../../resources/lang', 'purchase');
         $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'purchase');
+
+        $this->app->make(Router::class)
+            ->group(['prefix' => 'api'], __DIR__ . '/../routes/api.php');
     }
 
     public function register()

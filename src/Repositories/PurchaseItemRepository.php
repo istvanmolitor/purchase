@@ -27,6 +27,8 @@ class PurchaseItemRepository implements PurchaseItemRepositoryInterface
 
     public function saveItems(Purchase $purchase, array $rows): void
     {
+        $savedIds = [];
+
         foreach ($rows as $index => $purchaseItemData) {
             if ($purchase->purchaseItems->has($index)) {
                 $purchaseItem = $purchase->purchaseItems->get($index);
@@ -39,16 +41,12 @@ class PurchaseItemRepository implements PurchaseItemRepositoryInterface
             $purchaseItem->quantity = $purchaseItemData['quantity'];
             $purchaseItem->price = $purchaseItemData['price'];
             $purchaseItem->save();
+
+            $savedIds[] = $purchaseItem->id;
         }
 
-        /**
-         * @var int $index
-         * @var PurchaseItem $purchaseItem
-         */
-        foreach ($purchase->purchaseItems as $index => $purchaseItem) {
-            if(!isset($request->purchaseItems[$index])) {
-                $purchaseItem->delete();
-            }
-        }
+        $purchase->purchaseItems()
+            ->whereNotIn('id', $savedIds)
+            ->delete();
     }
 }
