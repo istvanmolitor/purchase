@@ -3,9 +3,9 @@
 namespace Molitor\Purchase\database\seeders;
 
 use Illuminate\Database\Seeder;
-use Molitor\Purchase\Models\PurchaseExtraItem;
+use Molitor\Purchase\Models\PurchaseExtraItemType;
 
-class PurchaseExtraItemSeeder extends Seeder
+class PurchaseExtraItemTypeSeeder extends Seeder
 {
     /**
      * Seed the application's database.
@@ -14,7 +14,7 @@ class PurchaseExtraItemSeeder extends Seeder
      */
     public function run()
     {
-        $items = [
+        $itemTypes = [
             [
                 'name' => 'Szállítási költség',
                 'description' => 'A beszállító által felszámított szállítás díja.',
@@ -37,12 +37,13 @@ class PurchaseExtraItemSeeder extends Seeder
             ],
         ];
 
-        foreach ($items as $item) {
-            PurchaseExtraItem::query()->updateOrCreate(
-                ['name' => $item['name']],
-                ['description' => $item['description']]
+        foreach ($itemTypes as $itemType) {
+            PurchaseExtraItemType::query()->updateOrCreate(
+                ['name' => $itemType['name']],
+                ['description' => $itemType['description']]
             );
         }
     }
 }
+
 

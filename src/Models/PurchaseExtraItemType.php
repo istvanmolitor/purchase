@@ -4,8 +4,10 @@ namespace Molitor\Purchase\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PurchaseExtraItem extends Model
+class PurchaseExtraItemType extends Model
 {
+    protected $table = 'purchase_extra_item_types';
+
     protected $fillable = [
         'name',
         'description',
@@ -16,4 +18,5 @@ class PurchaseExtraItem extends Model
         return $this->name;
     }
 }
+
 

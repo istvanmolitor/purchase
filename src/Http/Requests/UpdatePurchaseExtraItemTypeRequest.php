@@ -5,7 +5,7 @@ namespace Molitor\Purchase\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdatePurchaseExtraItemRequest extends FormRequest
+class UpdatePurchaseExtraItemTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -23,4 +23,5 @@ class UpdatePurchaseExtraItemRequest extends FormRequest
         ];
     }
 }
+
 

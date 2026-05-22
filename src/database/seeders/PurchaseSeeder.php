@@ -68,7 +68,7 @@ class PurchaseSeeder extends Seeder
         ]);
 
         $this->call([
-            PurchaseExtraItemSeeder::class,
+            PurchaseExtraItemTypeSeeder::class,
         ]);
     }
 }
