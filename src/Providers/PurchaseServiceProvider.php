@@ -10,6 +10,8 @@ use Molitor\Purchase\Repositories\PurchaseItemRepositoryInterface;
 use Molitor\Purchase\Repositories\PurchaseItemRepository;
 use Molitor\Purchase\Repositories\PurchaseStatusRepository;
 use Molitor\Purchase\Repositories\PurchaseStatusRepositoryInterface;
+use Molitor\Purchase\Repositories\PurchaseExtraItemRepository;
+use Molitor\Purchase\Repositories\PurchaseExtraItemRepositoryInterface;
 
 class PurchaseServiceProvider extends ServiceProvider
 {
@@ -28,5 +30,6 @@ class PurchaseServiceProvider extends ServiceProvider
         $this->app->bind(PurchaseRepositoryInterface::class, PurchaseRepository::class);
         $this->app->bind(PurchaseItemRepositoryInterface::class, PurchaseItemRepository::class);
         $this->app->bind(PurchaseStatusRepositoryInterface::class, PurchaseStatusRepository::class);
+        $this->app->bind(PurchaseExtraItemRepositoryInterface::class, PurchaseExtraItemRepository::class);
     }
 }

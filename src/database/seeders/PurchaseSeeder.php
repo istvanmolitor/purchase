@@ -66,5 +66,9 @@ class PurchaseSeeder extends Seeder
             'state' => 3,
             'description' => 'A beszerzés sérült állapotban érkezett meg.',
         ]);
+
+        $this->call([
+            PurchaseExtraItemSeeder::class,
+        ]);
     }
 }

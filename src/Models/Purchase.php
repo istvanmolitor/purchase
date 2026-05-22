@@ -49,6 +49,11 @@ class Purchase extends Model
         return $this->hasMany(PurchaseItem::class, 'purchase_id');
     }
 
+    public function purchaseLogs(): HasMany
+    {
+        return $this->hasMany(PurchaseLog::class, 'purchase_id');
+    }
+
     public function warehouse(): BelongsTo
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id');

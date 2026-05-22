@@ -145,6 +145,7 @@ class PurchaseApiController extends Controller
 
     public function destroy(Purchase $purchase): JsonResponse
     {
+        $purchase->purchaseLogs()->delete();
         $purchase->purchaseItems()->delete();
         $purchase->delete();
 
