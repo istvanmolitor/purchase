@@ -7,7 +7,7 @@ return [
         'url' => 'URL',
         'section_purchase' => 'Purchase',
         'section_items' => 'Items',
-                'section_addresses' => 'Addresses',
+        'section_addresses' => 'Addresses',
         'is_closed' => 'Closed',
         'customer' => 'Customer',
         'currency' => 'Currency',

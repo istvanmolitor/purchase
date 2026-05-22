@@ -21,5 +21,3 @@ class PurchaseExtraItemTypeResource extends JsonResource
         ];
     }
 }
-
-

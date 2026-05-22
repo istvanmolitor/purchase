@@ -5,9 +5,9 @@ namespace Molitor\Purchase\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Molitor\Purchase\Models\Purchase;
-use Molitor\Stock\Models\WarehouseRegion;
-use Molitor\Stock\Models\StockMovement;
 use Molitor\Stock\Enums\StockMovementType;
+use Molitor\Stock\Models\StockMovement;
+use Molitor\Stock\Models\WarehouseRegion;
 
 class PurchaseService
 {
@@ -26,7 +26,7 @@ class PurchaseService
         $stockMovement = StockMovement::create([
             'type' => StockMovementType::In,
             'warehouse_id' => $purchase->warehouse_id,
-            'description' => 'Purchase #' . $purchase->id,
+            'description' => 'Purchase #'.$purchase->id,
         ]);
 
         foreach ($purchase->purchaseItems as $purchaseItem) {

@@ -48,9 +48,9 @@ class PurchaseResource extends JsonResource
             }),
             'purchase_status' => PurchaseStatusResource::make($this->whenLoaded('purchaseStatus')),
             'purchase_items' => PurchaseItemResource::collection($this->whenLoaded('purchaseItems')),
+            'purchase_extra_items' => PurchaseExtraItemResource::collection($this->whenLoaded('purchaseExtraItems')),
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),
         ];
     }
 }
-

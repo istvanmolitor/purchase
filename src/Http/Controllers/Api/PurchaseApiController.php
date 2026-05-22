@@ -16,6 +16,7 @@ use Molitor\Purchase\Http\Requests\StorePurchaseRequest;
 use Molitor\Purchase\Http\Requests\UpdatePurchaseRequest;
 use Molitor\Purchase\Http\Resources\PurchaseResource;
 use Molitor\Purchase\Models\Purchase;
+use Molitor\Purchase\Models\PurchaseExtraItemType;
 use Molitor\Purchase\Models\PurchaseLog;
 use Molitor\Purchase\Models\PurchaseStatus;
 use Molitor\Purchase\Services\PurchaseService;
@@ -27,7 +28,7 @@ class PurchaseApiController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = Purchase::query()->with(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $query = Purchase::query()->with(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         $purchases = $this->applyAdminFilters($query, $request, ['url', 'comment'], 'id')
             ->paginate(10)
@@ -67,7 +68,13 @@ class PurchaseApiController extends Controller
             'currency_id' => $validated['currency_id'],
         ]);
 
-        $this->syncPurchaseItems($purchase, $validated['purchase_items']);
+        if (! empty($validated['purchase_items'])) {
+            $this->syncPurchaseItems($purchase, $validated['purchase_items']);
+        }
+
+        if (! empty($validated['purchase_extra_items'])) {
+            $this->syncPurchaseExtraItems($purchase, $validated['purchase_extra_items']);
+        }
 
         PurchaseLog::query()->create([
             'purchase_id' => $purchase->id,
@@ -77,7 +84,7 @@ class PurchaseApiController extends Controller
             'status_changed_at' => now(),
         ]);
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -87,7 +94,7 @@ class PurchaseApiController extends Controller
 
     public function show(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -97,7 +104,7 @@ class PurchaseApiController extends Controller
 
     public function edit(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json(array_merge([
             'data' => new PurchaseResource($purchase),
@@ -123,7 +130,17 @@ class PurchaseApiController extends Controller
             'currency_id' => $validated['currency_id'],
         ]);
 
-        $this->syncPurchaseItems($purchase, $validated['purchase_items']);
+        if (! empty($validated['purchase_items'])) {
+            $this->syncPurchaseItems($purchase, $validated['purchase_items']);
+        } else {
+            $purchase->purchaseItems()->delete();
+        }
+
+        if (! empty($validated['purchase_extra_items'])) {
+            $this->syncPurchaseExtraItems($purchase, $validated['purchase_extra_items']);
+        } else {
+            $purchase->purchaseExtraItems()->delete();
+        }
 
         if ($previousStatusId !== (int) $validated['purchase_status_id']) {
             PurchaseLog::query()->create([
@@ -135,7 +152,7 @@ class PurchaseApiController extends Controller
             ]);
         }
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -147,6 +164,7 @@ class PurchaseApiController extends Controller
     {
         $purchase->purchaseLogs()->delete();
         $purchase->purchaseItems()->delete();
+        $purchase->purchaseExtraItems()->delete();
         $purchase->delete();
 
         return response()->json([
@@ -170,7 +188,7 @@ class PurchaseApiController extends Controller
             'status_changed_at' => now(),
         ]);
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -184,7 +202,7 @@ class PurchaseApiController extends Controller
 
         $purchase = $purchase->load('purchaseItems');
         $closedPurchase = $purchaseService->closePurchase($purchase, Carbon::parse($deliveryDate));
-        $closedPurchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product']);
+        $closedPurchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($closedPurchase),
@@ -224,11 +242,14 @@ class PurchaseApiController extends Controller
                     ];
                 })
                 ->values(),
+            'purchase_extra_item_types' => PurchaseExtraItemType::query()
+                ->orderBy('name')
+                ->get(['id', 'name', 'description']),
         ];
     }
 
     /**
-     * @param array<int, array<string, mixed>> $items
+     * @param  array<int, array<string, mixed>>  $items
      */
     private function syncPurchaseItems(Purchase $purchase, array $items): void
     {
@@ -256,6 +277,33 @@ class PurchaseApiController extends Controller
     }
 
     /**
+     * @param  array<int, array<string, mixed>>  $items
+     */
+    private function syncPurchaseExtraItems(Purchase $purchase, array $items): void
+    {
+        $keptIds = [];
+
+        foreach ($items as $item) {
+            $purchaseExtraItem = $purchase->purchaseExtraItems()->updateOrCreate(
+                [
+                    'id' => $item['id'] ?? null,
+                ],
+                [
+                    'purchase_extra_item_type_id' => $item['purchase_extra_item_type_id'],
+                    'price' => $item['price'] ?? null,
+                    'comment' => $item['comment'] ?? null,
+                ]
+            );
+
+            $keptIds[] = $purchaseExtraItem->id;
+        }
+
+        $purchase->purchaseExtraItems()
+            ->whereNotIn('id', $keptIds)
+            ->delete();
+    }
+
+    /**
      * @return array<int, array<string, mixed>>
      */
     private function getLogs(Purchase $purchase): array
@@ -277,8 +325,3 @@ class PurchaseApiController extends Controller
             ->toArray();
     }
 }
-
-
-
-
-

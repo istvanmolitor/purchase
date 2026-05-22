@@ -68,4 +68,9 @@ class Purchase extends Model
     {
         return $this->belongsTo(PurchaseStatus::class, 'purchase_status_id');
     }
+
+    public function purchaseExtraItems(): HasMany
+    {
+        return $this->hasMany(PurchaseExtraItem::class, 'purchase_id');
+    }
 }

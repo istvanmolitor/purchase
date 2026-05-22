@@ -10,7 +10,7 @@ class PurchaseRepository implements PurchaseRepositoryInterface
 
     public function __construct()
     {
-        $this->purchase = new Purchase();
+        $this->purchase = new Purchase;
     }
 
     public function delete(Purchase $purchase): void

@@ -16,9 +16,7 @@ class PurchaseExtraItemTypeApiController extends Controller
 {
     use HasAdminFilters;
 
-    public function __construct(protected PurchaseExtraItemTypeRepositoryInterface $purchaseExtraItemTypeRepository)
-    {
-    }
+    public function __construct(protected PurchaseExtraItemTypeRepositoryInterface $purchaseExtraItemTypeRepository) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -88,5 +86,3 @@ class PurchaseExtraItemTypeApiController extends Controller
         ]);
     }
 }
-
-

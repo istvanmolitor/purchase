@@ -10,7 +10,7 @@ class PurchaseStatusRepository implements PurchaseStatusRepositoryInterface
 
     public function __construct()
     {
-        $this->purchaseStatus = new PurchaseStatus();
+        $this->purchaseStatus = new PurchaseStatus;
     }
 
     public function getOptions(): array

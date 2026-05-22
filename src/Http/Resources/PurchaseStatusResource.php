@@ -22,4 +22,3 @@ class PurchaseStatusResource extends JsonResource
         ];
     }
 }
-

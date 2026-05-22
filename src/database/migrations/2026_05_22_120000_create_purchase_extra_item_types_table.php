@@ -31,5 +31,3 @@ class CreatePurchaseExtraItemTypesTable extends Migration
         Schema::dropIfExists('purchase_extra_item_types');
     }
 }
-
-

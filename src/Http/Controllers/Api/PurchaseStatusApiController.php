@@ -82,4 +82,3 @@ class PurchaseStatusApiController extends Controller
         ]);
     }
 }
-

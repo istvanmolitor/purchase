@@ -18,5 +18,3 @@ class PurchaseExtraItemType extends Model
         return $this->name;
     }
 }
-
-

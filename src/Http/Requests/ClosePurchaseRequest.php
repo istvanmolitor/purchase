@@ -22,4 +22,3 @@ class ClosePurchaseRequest extends FormRequest
         ];
     }
 }
-

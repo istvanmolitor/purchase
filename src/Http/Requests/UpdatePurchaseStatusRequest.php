@@ -24,4 +24,3 @@ class UpdatePurchaseStatusRequest extends FormRequest
         ];
     }
 }
-

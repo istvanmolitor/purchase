@@ -12,7 +12,7 @@ class PurchaseItemRepository implements PurchaseItemRepositoryInterface
 
     public function __construct()
     {
-        $this->purchaseItem = new PurchaseItem();
+        $this->purchaseItem = new PurchaseItem;
     }
 
     public function delete(PurchaseItem $purchaseItem): void
@@ -33,7 +33,7 @@ class PurchaseItemRepository implements PurchaseItemRepositoryInterface
             if ($purchase->purchaseItems->has($index)) {
                 $purchaseItem = $purchase->purchaseItems->get($index);
             } else {
-                $purchaseItem = new PurchaseItem();
+                $purchaseItem = new PurchaseItem;
                 $purchaseItem->purchase_id = $purchase->id;
             }
 

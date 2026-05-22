@@ -11,7 +11,7 @@ class PurchaseExtraItemTypeRepository implements PurchaseExtraItemTypeRepository
 
     public function __construct()
     {
-        $this->purchaseExtraItemType = new PurchaseExtraItemType();
+        $this->purchaseExtraItemType = new PurchaseExtraItemType;
     }
 
     public function newQuery(): Builder
@@ -20,7 +20,7 @@ class PurchaseExtraItemTypeRepository implements PurchaseExtraItemTypeRepository
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): PurchaseExtraItemType
     {
@@ -28,7 +28,7 @@ class PurchaseExtraItemTypeRepository implements PurchaseExtraItemTypeRepository
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function update(PurchaseExtraItemType $purchaseExtraItemType, array $data): PurchaseExtraItemType
     {
@@ -42,5 +42,3 @@ class PurchaseExtraItemTypeRepository implements PurchaseExtraItemTypeRepository
         $purchaseExtraItemType->delete();
     }
 }
-
-

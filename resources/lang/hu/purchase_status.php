@@ -9,4 +9,3 @@ return [
     'state_completed' => 'Teljesített',
     'state_cancelled' => 'Megszakított',
 ];
-

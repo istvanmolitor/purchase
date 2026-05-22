@@ -27,4 +27,3 @@ class PurchaseStatus extends Model
         return $this->name;
     }
 }
-

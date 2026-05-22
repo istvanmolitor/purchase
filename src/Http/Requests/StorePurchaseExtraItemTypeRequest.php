@@ -23,5 +23,3 @@ class StorePurchaseExtraItemTypeRequest extends FormRequest
         ];
     }
 }
-
-

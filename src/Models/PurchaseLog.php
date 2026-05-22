@@ -2,9 +2,9 @@
 
 namespace Molitor\Purchase\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\User;
 
 class PurchaseLog extends Model
 {
@@ -13,7 +13,7 @@ class PurchaseLog extends Model
         'purchase_id',
         'purchase_status_id',
         'comment',
-        'status_changed_at'
+        'status_changed_at',
     ];
 
     protected $casts = [

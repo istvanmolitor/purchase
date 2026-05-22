@@ -15,4 +15,3 @@ Route::prefix('admin/purchase')
         Route::resource('purchase-statuses', PurchaseStatusApiController::class);
         Route::resource('purchase-extra-item-types', PurchaseExtraItemTypeApiController::class);
     });
-
