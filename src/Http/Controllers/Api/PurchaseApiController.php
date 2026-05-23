@@ -30,7 +30,7 @@ class PurchaseApiController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = Purchase::query()->with(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $query = Purchase::query()->with(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         $purchases = $this->applyAdminFilters($query, $request, ['url', 'comment'], 'id')
             ->paginate(10)
@@ -86,7 +86,7 @@ class PurchaseApiController extends Controller
             'status_changed_at' => now(),
         ]);
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -96,7 +96,7 @@ class PurchaseApiController extends Controller
 
     public function show(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -108,7 +108,7 @@ class PurchaseApiController extends Controller
 
     public function edit(Purchase $purchase): JsonResponse
     {
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json(array_merge([
             'data' => new PurchaseResource($purchase),
@@ -156,7 +156,7 @@ class PurchaseApiController extends Controller
             ]);
         }
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -192,7 +192,7 @@ class PurchaseApiController extends Controller
             'status_changed_at' => now(),
         ]);
 
-        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $purchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($purchase),
@@ -206,7 +206,7 @@ class PurchaseApiController extends Controller
 
         $purchase = $purchase->load('purchaseItems');
         $closedPurchase = $purchaseService->closePurchase($purchase, Carbon::parse($deliveryDate));
-        $closedPurchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product', 'purchaseExtraItems.purchaseExtraItemType']);
+        $closedPurchase->load(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
 
         return response()->json([
             'data' => new PurchaseResource($closedPurchase),
@@ -234,15 +234,19 @@ class PurchaseApiController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name', 'state', 'description']),
             'products' => Product::query()
-                ->with('mainImage:id,product_id,image_url')
+                ->with(['mainImage:id,product_id,image_url', 'productUnit'])
                 ->orderBy('sku')
-                ->get(['id', 'sku'])
+                ->get(['id', 'sku', 'name', 'product_unit_id'])
                 ->map(function (Product $product): array {
                     return [
                         'id' => $product->id,
                         'sku' => $product->sku,
                         'name' => $product->name ?: $product->sku,
                         'image_url' => $product->mainImage?->image_url,
+                        'product_unit' => $product->productUnit !== null ? [
+                            'id' => $product->productUnit->id,
+                            'name' => $product->productUnit->name,
+                        ] : null,
                     ];
                 })
                 ->values(),

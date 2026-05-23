@@ -23,6 +23,10 @@ class PurchaseItemResource extends JsonResource
                 return [
                     'id' => $this->product?->id,
                     'name' => $this->product?->sku,
+                    'product_unit' => $this->product?->productUnit !== null ? [
+                        'id' => $this->product->productUnit->id,
+                        'name' => $this->product->productUnit->name,
+                    ] : null,
                 ];
             }),
         ];
