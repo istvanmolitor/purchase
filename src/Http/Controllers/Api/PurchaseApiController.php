@@ -15,6 +15,8 @@ use Molitor\Purchase\Http\Requests\ClosePurchaseRequest;
 use Molitor\Purchase\Http\Requests\StorePurchaseRequest;
 use Molitor\Purchase\Http\Requests\UpdatePurchaseRequest;
 use Molitor\Purchase\Http\Resources\PurchaseResource;
+use Molitor\Purchase\Models\PurchaseExtraItem;
+use Molitor\Purchase\Models\PurchaseItem;
 use Molitor\Purchase\Models\Purchase;
 use Molitor\Purchase\Models\PurchaseExtraItemType;
 use Molitor\Purchase\Models\PurchaseLog;
@@ -99,6 +101,8 @@ class PurchaseApiController extends Controller
         return response()->json([
             'data' => new PurchaseResource($purchase),
             'logs' => $this->getLogs($purchase),
+            'products' => $this->getSelectedProducts($purchase),
+            'purchase_extra_item_types' => $this->getSelectedExtraItemTypes($purchase),
         ]);
     }
 
@@ -322,6 +326,52 @@ class PurchaseApiController extends Controller
                     'status_changed_at' => $log->status_changed_at?->toDateTimeString(),
                 ];
             })
+            ->toArray();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function getSelectedProducts(Purchase $purchase): array
+    {
+        return $purchase->purchaseItems
+            ->map(function (PurchaseItem $purchaseItem): ?array {
+                if ($purchaseItem->product === null) {
+                    return null;
+                }
+
+                return [
+                    'id' => $purchaseItem->product->id,
+                    'sku' => $purchaseItem->product->sku,
+                    'name' => $purchaseItem->product->sku,
+                ];
+            })
+            ->filter()
+            ->unique('id')
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    private function getSelectedExtraItemTypes(Purchase $purchase): array
+    {
+        return $purchase->purchaseExtraItems
+            ->map(function (PurchaseExtraItem $purchaseExtraItem): ?array {
+                if ($purchaseExtraItem->purchaseExtraItemType === null) {
+                    return null;
+                }
+
+                return [
+                    'id' => $purchaseExtraItem->purchaseExtraItemType->id,
+                    'name' => $purchaseExtraItem->purchaseExtraItemType->name,
+                    'description' => $purchaseExtraItem->purchaseExtraItemType->description,
+                ];
+            })
+            ->filter()
+            ->unique('id')
+            ->values()
             ->toArray();
     }
 }
