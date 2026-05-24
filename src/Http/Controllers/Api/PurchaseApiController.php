@@ -234,9 +234,9 @@ class PurchaseApiController extends Controller
                 ->orderBy('name')
                 ->get(['id', 'name', 'state', 'description']),
             'products' => Product::query()
-                ->with(['mainImage:id,product_id,image_url', 'productUnit'])
+                ->with(['mainImage:id,product_id,image_url', 'productUnit', 'translations'])
                 ->orderBy('sku')
-                ->get(['id', 'sku', 'name', 'product_unit_id'])
+                ->get(['id', 'sku', 'product_unit_id'])
                 ->map(function (Product $product): array {
                     return [
                         'id' => $product->id,
@@ -347,7 +347,6 @@ class PurchaseApiController extends Controller
                 return [
                     'id' => $purchaseItem->product->id,
                     'sku' => $purchaseItem->product->sku,
-                    'name' => $purchaseItem->product->sku,
                 ];
             })
             ->filter()
