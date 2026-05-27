@@ -4,6 +4,8 @@ namespace Molitor\Purchase\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use Molitor\Purchase\Enums\PurchaseState;
 
 class UpdatePurchaseStatusRequest extends FormRequest
 {
@@ -19,7 +21,7 @@ class UpdatePurchaseStatusRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'state' => 'required|integer|min:0|max:3',
+            'state' => ['required', new Enum(PurchaseState::class)],
             'description' => 'nullable|string',
         ];
     }

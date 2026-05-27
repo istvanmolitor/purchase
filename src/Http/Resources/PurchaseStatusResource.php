@@ -15,7 +15,7 @@ class PurchaseStatusResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'state' => $this->state,
+            'state' => $this->state?->value,
             'description' => $this->description,
             'created_at' => $this->created_at?->toDateTimeString(),
             'updated_at' => $this->updated_at?->toDateTimeString(),

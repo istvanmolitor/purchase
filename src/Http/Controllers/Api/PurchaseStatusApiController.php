@@ -6,10 +6,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Molitor\Admin\Traits\HasAdminFilters;
+use Molitor\Purchase\Enums\PurchaseState;
 use Molitor\Purchase\Http\Requests\StorePurchaseStatusRequest;
 use Molitor\Purchase\Http\Requests\UpdatePurchaseStatusRequest;
 use Molitor\Purchase\Http\Resources\PurchaseStatusResource;
 use Molitor\Purchase\Models\PurchaseStatus;
+use Molitor\Purchase\Repositories\PurchaseStatusRepositoryInterface;
 
 class PurchaseStatusApiController extends Controller
 {
@@ -39,9 +41,13 @@ class PurchaseStatusApiController extends Controller
         return response()->json([]);
     }
 
-    public function store(StorePurchaseStatusRequest $request): JsonResponse
+    public function store(StorePurchaseStatusRequest $request, PurchaseStatusRepositoryInterface $purchaseStatusRepository): JsonResponse
     {
-        $status = PurchaseStatus::query()->create($request->validated());
+        $status = $purchaseStatusRepository->create(
+            $request->string('name')->toString(),
+            PurchaseState::from($request->integer('state')),
+            $request->input('description')
+        );
 
         return response()->json([
             'data' => new PurchaseStatusResource($status),
@@ -63,9 +69,14 @@ class PurchaseStatusApiController extends Controller
         ]);
     }
 
-    public function update(UpdatePurchaseStatusRequest $request, PurchaseStatus $purchaseStatus): JsonResponse
+    public function update(UpdatePurchaseStatusRequest $request, PurchaseStatus $purchaseStatus, PurchaseStatusRepositoryInterface $purchaseStatusRepository): JsonResponse
     {
-        $purchaseStatus->update($request->validated());
+        $purchaseStatus = $purchaseStatusRepository->update(
+            $purchaseStatus,
+            $request->string('name')->toString(),
+            PurchaseState::from($request->integer('state')),
+            $request->input('description')
+        );
 
         return response()->json([
             'data' => new PurchaseStatusResource($purchaseStatus),

@@ -4,6 +4,7 @@ namespace Molitor\Purchase\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Molitor\Purchase\Enums\PurchaseState;
 
 class PurchaseStatus extends Model
 {
@@ -14,7 +15,7 @@ class PurchaseStatus extends Model
     ];
 
     protected $casts = [
-        'state' => 'integer',
+        'state' => PurchaseState::class,
     ];
 
     public function purchases(): HasMany
