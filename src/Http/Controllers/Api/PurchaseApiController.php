@@ -21,6 +21,7 @@ use Molitor\Purchase\Models\Purchase;
 use Molitor\Purchase\Models\PurchaseExtraItemType;
 use Molitor\Purchase\Models\PurchaseLog;
 use Molitor\Purchase\Models\PurchaseStatus;
+use Molitor\Purchase\Services\PurchaseRequirementService;
 use Molitor\Purchase\Services\PurchaseService;
 use Molitor\Stock\Models\Warehouse;
 
@@ -211,6 +212,19 @@ class PurchaseApiController extends Controller
         return response()->json([
             'data' => new PurchaseResource($closedPurchase),
             'message' => 'Beszerzes sikeresen lezarva.',
+        ]);
+    }
+
+    public function requirements(Request $request, PurchaseRequirementService $purchaseRequirementService): JsonResponse
+    {
+        $warehouseId = $request->input('warehouse_id');
+
+        $products = $purchaseRequirementService->getProductsThatNeedPurchasing($warehouseId ? (int) $warehouseId : null);
+
+        return response()->json([
+            'data' => $products,
+            'total_products' => $products->count(),
+            'warehouses' => Warehouse::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
 

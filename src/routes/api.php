@@ -9,6 +9,7 @@ Route::prefix('admin/purchase')
     ->middleware(['api', 'auth:sanctum'])
     ->name('purchase.')
     ->group(function () {
+        Route::get('purchases/requirements/list', [PurchaseApiController::class, 'requirements']);
         Route::post('purchases/{purchase}/status', [PurchaseApiController::class, 'updateStatus']);
         Route::post('purchases/{purchase}/close', [PurchaseApiController::class, 'close']);
         Route::resource('purchases', PurchaseApiController::class);
