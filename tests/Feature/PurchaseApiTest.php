@@ -64,6 +64,7 @@ class PurchaseApiTest extends TestCase
         Schema::create('warehouses', function (Blueprint $table): void {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->boolean('is_primary')->default(false);
             $table->timestamps();
         });
@@ -72,6 +73,7 @@ class PurchaseApiTest extends TestCase
             $table->id();
             $table->foreignId('warehouse_id')->constrained('warehouses');
             $table->string('name');
+            $table->text('description')->nullable();
             $table->boolean('is_primary')->default(false);
             $table->timestamps();
         });
