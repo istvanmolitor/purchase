@@ -21,6 +21,7 @@ use Molitor\Purchase\Models\Purchase;
 use Molitor\Purchase\Models\PurchaseExtraItemType;
 use Molitor\Purchase\Models\PurchaseLog;
 use Molitor\Purchase\Models\PurchaseStatus;
+use Molitor\Purchase\Repositories\PurchaseRepositoryInterface;
 use Molitor\Purchase\Services\PurchaseRequirementService;
 use Molitor\Purchase\Services\PurchaseService;
 use Molitor\Stock\Models\Warehouse;
@@ -28,6 +29,10 @@ use Molitor\Stock\Models\Warehouse;
 class PurchaseApiController extends Controller
 {
     use HasAdminFilters;
+
+    public function __construct(
+        private PurchaseRepositoryInterface $purchaseRepository
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -58,18 +63,7 @@ class PurchaseApiController extends Controller
     {
         $validated = $request->validated();
 
-        $purchase = Purchase::query()->create([
-            'purchase_status_id' => $validated['purchase_status_id'],
-            'url' => $validated['url'] ?? null,
-            'customer_id' => $validated['customer_id'],
-            'warehouse_id' => $validated['warehouse_id'],
-            'comment' => $validated['comment'] ?? null,
-            'purchase_date' => $validated['purchase_date'] ?? null,
-            'expected_delivery_date' => $validated['expected_delivery_date'] ?? null,
-            'delivery_date' => $validated['delivery_date'] ?? null,
-            'total_price' => $validated['total_price'] ?? null,
-            'currency_id' => $validated['currency_id'],
-        ]);
+        $purchase = $this->purchaseRepository->create($validated);
 
         if (! empty($validated['purchase_items'])) {
             $this->syncPurchaseItems($purchase, $validated['purchase_items']);
