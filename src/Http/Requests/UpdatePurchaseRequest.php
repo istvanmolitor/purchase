@@ -4,13 +4,14 @@ namespace Molitor\Purchase\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Validator;
 
 class UpdatePurchaseRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('acl', 'purchase');
     }
 
     /**
