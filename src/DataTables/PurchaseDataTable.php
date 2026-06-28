@@ -28,9 +28,9 @@ class PurchaseDataTable extends DataTable
         $this->addColumn('comment')->setLabel('Megjegyzés')->setSearchable();
     }
 
-    protected function getBaseQuery(): Builder
+    public function query(Builder $query): Builder
     {
-        return Purchase::query()->with([
+        return $query->with([
             'customer',
             'currency',
             'warehouse',
