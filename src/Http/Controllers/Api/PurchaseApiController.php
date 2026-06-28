@@ -5,8 +5,10 @@ namespace Molitor\Purchase\Http\Controllers\Api;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
 use Molitor\Admin\Traits\HasAdminFilters;
+use Molitor\Purchase\DataTables\PurchaseDataTable;
 use Molitor\Currency\Models\Currency;
 use Molitor\Customer\Models\Customer;
 use Molitor\Product\Models\Product;
@@ -34,24 +36,9 @@ class PurchaseApiController extends Controller
         private PurchaseRepositoryInterface $purchaseRepository
     ) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(PurchaseDataTable $dataTable): AnonymousResourceCollection
     {
-        $query = Purchase::query()->with(['customer', 'currency', 'warehouse', 'purchaseStatus', 'purchaseItems.product.productUnit', 'purchaseExtraItems.purchaseExtraItemType']);
-
-        $purchases = $this->applyAdminFilters($query, $request, ['url', 'comment'], 'id')
-            ->paginate(10)
-            ->withQueryString();
-
-        return response()->json([
-            'data' => PurchaseResource::collection($purchases->items()),
-            'meta' => [
-                'current_page' => $purchases->currentPage(),
-                'last_page' => $purchases->lastPage(),
-                'per_page' => $purchases->perPage(),
-                'total' => $purchases->total(),
-            ],
-            'filters' => $request->only(['search', 'sort', 'direction']),
-        ]);
+        return $dataTable->getResponse();
     }
 
     public function create(): JsonResponse

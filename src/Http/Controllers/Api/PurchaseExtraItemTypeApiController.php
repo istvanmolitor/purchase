@@ -3,9 +3,9 @@
 namespace Molitor\Purchase\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
-use Molitor\Admin\Traits\HasAdminFilters;
+use Molitor\Purchase\DataTables\PurchaseExtraItemTypeDataTable;
 use Molitor\Purchase\Http\Requests\StorePurchaseExtraItemTypeRequest;
 use Molitor\Purchase\Http\Requests\UpdatePurchaseExtraItemTypeRequest;
 use Molitor\Purchase\Http\Resources\PurchaseExtraItemTypeResource;
@@ -14,28 +14,11 @@ use Molitor\Purchase\Repositories\PurchaseExtraItemTypeRepositoryInterface;
 
 class PurchaseExtraItemTypeApiController extends Controller
 {
-    use HasAdminFilters;
-
     public function __construct(protected PurchaseExtraItemTypeRepositoryInterface $purchaseExtraItemTypeRepository) {}
 
-    public function index(Request $request): JsonResponse
+    public function index(PurchaseExtraItemTypeDataTable $dataTable): AnonymousResourceCollection
     {
-        $query = $this->purchaseExtraItemTypeRepository->newQuery();
-
-        $purchaseExtraItemTypes = $this->applyAdminFilters($query, $request, ['name', 'description'])
-            ->paginate(10)
-            ->withQueryString();
-
-        return response()->json([
-            'data' => PurchaseExtraItemTypeResource::collection($purchaseExtraItemTypes->items()),
-            'meta' => [
-                'current_page' => $purchaseExtraItemTypes->currentPage(),
-                'last_page' => $purchaseExtraItemTypes->lastPage(),
-                'per_page' => $purchaseExtraItemTypes->perPage(),
-                'total' => $purchaseExtraItemTypes->total(),
-            ],
-            'filters' => $request->only(['search', 'sort', 'direction']),
-        ]);
+        return $dataTable->getResponse();
     }
 
     public function create(): JsonResponse

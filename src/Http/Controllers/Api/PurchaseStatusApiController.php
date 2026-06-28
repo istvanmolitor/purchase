@@ -3,9 +3,9 @@
 namespace Molitor\Purchase\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Routing\Controller;
-use Molitor\Admin\Traits\HasAdminFilters;
+use Molitor\Purchase\DataTables\PurchaseStatusDataTable;
 use Molitor\Purchase\Enums\PurchaseState;
 use Molitor\Purchase\Http\Requests\StorePurchaseStatusRequest;
 use Molitor\Purchase\Http\Requests\UpdatePurchaseStatusRequest;
@@ -15,25 +15,9 @@ use Molitor\Purchase\Repositories\PurchaseStatusRepositoryInterface;
 
 class PurchaseStatusApiController extends Controller
 {
-    use HasAdminFilters;
-
-    public function index(Request $request): JsonResponse
+    public function index(PurchaseStatusDataTable $dataTable): AnonymousResourceCollection
     {
-        $query = PurchaseStatus::query();
-        $statuses = $this->applyAdminFilters($query, $request, ['name', 'description'])
-            ->paginate(10)
-            ->withQueryString();
-
-        return response()->json([
-            'data' => PurchaseStatusResource::collection($statuses->items()),
-            'meta' => [
-                'current_page' => $statuses->currentPage(),
-                'last_page' => $statuses->lastPage(),
-                'per_page' => $statuses->perPage(),
-                'total' => $statuses->total(),
-            ],
-            'filters' => $request->only(['search', 'sort', 'direction']),
-        ]);
+        return $dataTable->getResponse();
     }
 
     public function create(): JsonResponse
