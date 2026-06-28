@@ -23,9 +23,9 @@ class PurchaseDataTable extends DataTable
 
     protected function initColumns(): void
     {
-        $this->addColumn('id')->setOrderable();
-        $this->addColumn('url')->setSearchable();
-        $this->addColumn('comment')->setSearchable();
+        $this->addColumn('id')->setOrderable()->setHidden();
+        $this->addColumn('url')->setLabel('URL')->setSearchable();
+        $this->addColumn('comment')->setLabel('Megjegyzés')->setSearchable();
     }
 
     protected function getBaseQuery(): Builder
